@@ -1,0 +1,7 @@
+<!-- android/app/src/main/AndroidManifest.xml -->
+<!-- 1. On the <activity>: lock to portrait -->
+<!--    android:screenOrientation="portrait" -->
+<!-- 2. Inside <application>: the AdMob app id -->
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="@string/admob_app_id" />

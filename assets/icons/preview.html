@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pratinjau ikon</title>
+  <style>
+    :root { --bg: #1d1433; --card: #2b1d4e; --cream: #fff7e8; --green: #22c55e; }
+    body { margin: 0; padding: 24px 16px; background: var(--bg); color: var(--cream); font: 15px system-ui, sans-serif; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    p { margin: 0 0 20px; opacity: .8; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+    .cell { background: var(--card); border-radius: 14px; padding: 14px 6px 10px; text-align: center; }
+    .cell svg { width: 32px; height: 32px; --acc: rgba(255,255,255,.18); }
+    .cell .s { width: 20px; height: 20px; margin-left: 6px; }
+    .cell.acc svg { --acc: #ff6b81; }
+    code { display: block; margin-top: 8px; font-size: 12px; opacity: .85; }
+    label { display: inline-flex; gap: 6px; align-items: center; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Sprite ikon Lav Studio</h1>
+  <p>Ukuran 32px dan 20px. Centang untuk melihat warna aksen <code style="display:inline">--acc</code>.</p>
+  <label><input type="checkbox" id="acc"> Aksen pink</label>
+  <div id="sprite"></div>
+  <div class="grid" id="grid"></div>
+  <script>
+    // Loads sprite.svg next to this file and renders every symbol.
+    fetch('sprite.svg').then((r) => r.text()).then((t) => {
+      document.getElementById('sprite').innerHTML = t;
+      const ids = [...t.matchAll(/<symbol id="([^"]+)"/g)].map((m) => m[1]);
+      document.getElementById('grid').innerHTML = ids.map((id) =>
+        `<div class="cell"><svg><use href="#${id}"/></svg><svg class="s"><use href="#${id}"/></svg><code>${id}</code></div>`).join('');
+    });
+    document.getElementById('acc').addEventListener('change', (e) =>
+      document.querySelectorAll('.cell').forEach((c) => c.classList.toggle('acc', e.target.checked)));
+  </script>
+</body>
+</html>

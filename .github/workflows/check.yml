@@ -1,0 +1,37 @@
+name: Check templates
+
+# Keeps the starter template honest: logic tests, no-emoji rule, a browser smoke test,
+# and every skill has a valid SKILL.md frontmatter.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Starter logic and no-emoji
+        working-directory: templates/starter
+        run: |
+          node scripts/test-engine.js
+          node scripts/check-no-emoji.js
+      - name: Skills frontmatter
+        run: |
+          for f in .claude/skills/*/SKILL.md; do
+            head -1 "$f" | grep -qx -- '---' || { echo "missing frontmatter: $f"; exit 1; }
+            grep -q '^name: ' "$f" && grep -q '^description: ' "$f" || { echo "missing name/description: $f"; exit 1; }
+          done
+          echo "skills ok"
+      - name: Starter smoke test (Playwright)
+        working-directory: templates/starter
+        run: |
+          npm i --no-save playwright@1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8123 &
+          sleep 1
+          node scripts/smoke.js http://localhost:8123/ shots
